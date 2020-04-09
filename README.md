@@ -40,3 +40,16 @@ PUT
 		- `'Customer balance updated!'`  
 	- if unsuccessful 
 		- `'It failed dude'`
+		
+
+**/customerAccounts**
+ 
+DELETE
+- Does a HARD delete and removes customer account from db
+- Requires and sends:
+    - `{ 'id' : number }` 
+- Returns:
+	- if successful
+		- `'Customer account deleted!'`  
+	- if unsuccessful 
+		- `'It failed dude'`
