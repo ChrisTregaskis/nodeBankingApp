@@ -95,7 +95,6 @@ var insertNewCustomerAccount = async (db, newCustomerAccountToSend) => {
     return result;
 };
 
-//Random 9 digit number for account number
 function generateAccountNumber() {
     return Math.floor(Math.random() * 1000000000);
 }
@@ -174,11 +173,23 @@ var updateCustomerBalance = async (db, id, updatedCustomerBalanceData) => {
 };
 
 
-//------------------- Update customer balance route -------------------//
+//------------------- Hard-Delete customer account route -------------------//
 
 app.delete('/customerAccounts', jsonParser, (req, res) => {
 
     let id = ObjectId(req.body.id);
+    let reqBody = req.body;
+    let status = 500;
+    let response = {
+        "success": false,
+        "message": "err!",
+    };
+
+    if(!(reqBody.hasOwnProperty('id'))) {
+        response.message = 'Document Id required in order to delete account';
+        res.status(status).send(response);
+        return
+    }
 
     MongoClient.connect(url,
         { useNewUrlParser: true, useUnifiedTopology: true },
@@ -189,9 +200,13 @@ app.delete('/customerAccounts', jsonParser, (req, res) => {
             let deletedCustomerAccount = await deleteCustomerAccount(db, id);
 
             if(deletedCustomerAccount.deletedCount === 1) {
-                res.send('Customer account deleted!')
+                response.success = true;
+                response.message = 'Customer account successfully deleted!';
+                status = 200;
+                res.status(status).send(response)
             } else {
-                res.send('It failed dude')
+                response.message = 'Unsuccessfully deleted from database';
+                res.status(status).send(response)
             }
 
             client.close()
@@ -199,7 +214,6 @@ app.delete('/customerAccounts', jsonParser, (req, res) => {
         })
 
 });
-
 
 var deleteCustomerAccount = async (db, id) => {
     let collection = db.collection(dbCollection);
