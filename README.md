@@ -21,24 +21,14 @@ POST
     - `customer_sname` - customer's surname 
     - `balance`
 - Sends: 
-  - `{ 
-        "customer_fname": "string", 
-	"customer_sname": "string", 
-	"balance": number 
-     }`
+  - `{ "customer_fname": "string", "customer_sname": "string", "balance": number }`
 - Returns:
     - if successful 
         - `status 200`
-        - `{ 
-	      "success": true, 
-	      "message": "New customer account added!" 
-	   }`  
+        - `{ "success": true, "message": "New customer account added!" }`  
     - if unsuccessful
         - `status 500` 
-        - `{ 
-	      "success": false, 
-	      "message": "First name, surname and balance are required" 
-	   }`
+        - `{ "success": false, "message": "First name, surname and balance are required" }`
     
 **/customerAccounts**
 
@@ -48,15 +38,9 @@ PUT
     - `id`
     - `deposit` OR `witdrawal`
 - Sends an array of:
-    - `{ 
-          "id": "string", 
-	  "deposit": number 
-        }` 
+    - `{ "id": "string", "deposit": number }` 
     - OR
-    - `{ 
-          "id": "string", 
-	   "withdrawal": number 
-       }` 
+    - `{ "id": "string", "withdrawal": number }` 
 - Returns:
     - if successful
         - `status 200`
