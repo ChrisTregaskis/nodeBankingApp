@@ -41,6 +41,12 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
 
     let branch = "Chrispy SW";
     let accountNumber = generateAccountNumber();
+    let reqBody = req.body;
+    let status = 500;
+    let response = {
+        "success": false,
+        "message": "err!",
+    };
 
     const newCustomerAccount = {
         account_number: accountNumber,
@@ -49,6 +55,15 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
         customer_sname: req.body.customer_sname,
         balance: req.body.balance
     };
+
+    if(!(reqBody.hasOwnProperty('customer_fname')) ||
+        !(reqBody.hasOwnProperty('customer_sname')) ||
+        !(reqBody.hasOwnProperty('balance'))) {
+
+        response.message = 'First name, surname and balance are required';
+        res.status(status).send(response);
+        return
+    }
 
     MongoClient.connect(url,
         { useNewUrlParser: true, useUnifiedTopology: true },
@@ -59,9 +74,13 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
             let createCustomerAccount = await insertNewCustomerAccount(db, newCustomerAccount);
 
             if(createCustomerAccount.insertedCount === 1) {
-                res.send('New customer account added!')
+                response.success = true;
+                response.message = 'New customer account added!';
+                status = 200;
+                res.status(status).send(response)
             } else {
-                res.send('It failed dude')
+                response.message = 'It failed dude';
+                res.status(status).send(response)
             }
             client.close()
 
