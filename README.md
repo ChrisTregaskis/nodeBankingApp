@@ -37,15 +37,23 @@ PUT
 - Updates customer account balance following a deposit/ withdrawal request
 - Required properties:
     - `id`
-    - `deposit` - default to `null` 
-    - `witdrawal` - default to `null`
+    - `deposit` OR `witdrawal`
 - Sends an array of:
-    - `{ "id": "string", "deposit": null or number, "withdrawal": null or number }` 
+    - `{ "id": "string", "deposit": number }` 
+    - OR
+    - `{ "id": "string", "withdrawal": number }` 
 - Returns:
     - if successful
-        - `'Customer balance updated!'`  
-    - if unsuccessful 
-        - `'It failed dude'`
+        - `status 200`
+        - `{ "success": true, "message": "Customer balance updated!" }` 
+    - if unsuccessful, either of the following, depending on error:
+   	- `status 500`
+	- missing id or either deposit or withdrawal
+            - `{ "success": false, "message": "Document id and either deposit or withdrawal values are required" }`
+	- trying to send deposit and withdrawal at the same time
+	    - `{ "success": false, "message": "Can not send a deposit and withdrawal at the same time. Must be separate requests" }`
+	- if data base failed to update
+	    - `{ "success": false, "message": "modifiedCount 0. Failed to update." }`
 		
 
 **/customerAccounts**
