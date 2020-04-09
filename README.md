@@ -17,9 +17,9 @@ Exercise building a simple banking app using node and mongoDB
 POST
 - Creates a new customer account
 - Required
-    - customer's first name `customer_fname`
-    - customer's surname `customer_sname`
-    - balance `balance`
+    - `customer_fname` - customer's first name 
+    - `customer_sname` - customer's surname 
+    - `balance`
 - Sends: 
   - `{ "customer_fname": "string", "customer_sname": "string", "balance": number }`
 - Returns:
