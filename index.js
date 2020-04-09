@@ -41,14 +41,29 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
 
     let branch = "Chrispy SW";
     let accountNumber = generateAccountNumber();
+    let reqBody = req.body;
+    let status = 500;
+    let response = {
+        "success": false,
+        "message": "err!",
+    };
 
     const newCustomerAccount = {
         account_number: accountNumber,
         branch: branch,
-        customer_fname: req.body.customer_fname,
-        customer_sname: req.body.customer_sname,
+        customer_fname: reqBody.customer_fname,
+        customer_sname: reqBody.customer_sname,
         balance: req.body.balance
     };
+
+    if(!(reqBody.hasOwnProperty('customer_fname')) ||
+        !(reqBody.hasOwnProperty('customer_sname')) ||
+        !(reqBody.hasOwnProperty('balance'))) {
+
+        response.message = 'First name, surname and balance are required';
+        res.status(status).send(response);
+        return
+    }
 
     MongoClient.connect(url,
         { useNewUrlParser: true, useUnifiedTopology: true },
@@ -59,10 +74,15 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
             let createCustomerAccount = await insertNewCustomerAccount(db, newCustomerAccount);
 
             if(createCustomerAccount.insertedCount === 1) {
-                res.send('New customer account added!')
+                response.success = true;
+                response.message = 'New customer account added!';
+                status = 200;
+                res.status(status).send(response)
             } else {
-                res.send('It failed dude')
+                response.message = 'It failed dude';
+                res.status(status).send(response)
             }
+
             client.close()
 
         })
@@ -75,7 +95,6 @@ var insertNewCustomerAccount = async (db, newCustomerAccountToSend) => {
     return result;
 };
 
-//Random 9 digit number for account number
 function generateAccountNumber() {
     return Math.floor(Math.random() * 1000000000);
 }
@@ -89,13 +108,34 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
     let depositAmount = req.body.deposit;
     let withdrawalAmount = req.body.withdrawal;
     let updatedCustomerBalanceData = '';
+    let reqBody = req.body;
+    let status = 500;
+    let response = {
+        "success": false,
+        "message": "err!",
+    };
 
-    if (depositAmount === null) {
-        updatedCustomerBalanceData = withdrawalAmount;
-    } else if (withdrawalAmount === null) {
+    if (!(reqBody.hasOwnProperty('id')) ||
+        !(reqBody.hasOwnProperty('deposit') || reqBody.hasOwnProperty('withdrawal'))) {
+        response.message = 'Document id and either deposit or withdrawal values are required';
+        res.status(status).send(response);
+        return
+    }
+
+    if (reqBody.hasOwnProperty('id') &&
+        reqBody.hasOwnProperty('deposit') && reqBody.hasOwnProperty('withdrawal')) {
+        response.message = 'Can not send a deposit and withdrawal at the same time. Must be separate requests';
+        res.status(status).send(response);
+        return
+    }
+
+    if (reqBody.hasOwnProperty('id') && reqBody.hasOwnProperty('deposit')) {
         updatedCustomerBalanceData = depositAmount;
+    } else if (reqBody.hasOwnProperty('id') && reqBody.hasOwnProperty('withdrawal')) {
+        updatedCustomerBalanceData = withdrawalAmount;
     } else {
-        res.send('deposit and withdrawal values empty');
+        response.message = 'Missing either id, deposit or withdrawal';
+        res.status(status).send(response);
         return
     }
 
@@ -108,9 +148,13 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
             let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
 
             if(customerBalance.modifiedCount === 1) {
-                res.send('Customer balance updated!')
+                response.success = true;
+                response.message = 'Customer balance updated!';
+                status = 200;
+                res.status(status).send(response)
             } else {
-                res.send('It failed dude')
+                response.message = 'modifiedCount 0. Failed to update.';
+                res.status(status).send(response)
             }
 
             client.close()
@@ -129,11 +173,23 @@ var updateCustomerBalance = async (db, id, updatedCustomerBalanceData) => {
 };
 
 
-//------------------- Update customer balance route -------------------//
+//------------------- Hard-Delete customer account route -------------------//
 
 app.delete('/customerAccounts', jsonParser, (req, res) => {
 
     let id = ObjectId(req.body.id);
+    let reqBody = req.body;
+    let status = 500;
+    let response = {
+        "success": false,
+        "message": "err!",
+    };
+
+    if(!(reqBody.hasOwnProperty('id'))) {
+        response.message = 'Document Id required in order to delete account';
+        res.status(status).send(response);
+        return
+    }
 
     MongoClient.connect(url,
         { useNewUrlParser: true, useUnifiedTopology: true },
@@ -144,9 +200,13 @@ app.delete('/customerAccounts', jsonParser, (req, res) => {
             let deletedCustomerAccount = await deleteCustomerAccount(db, id);
 
             if(deletedCustomerAccount.deletedCount === 1) {
-                res.send('Customer account deleted!')
+                response.success = true;
+                response.message = 'Customer account successfully deleted!';
+                status = 200;
+                res.status(status).send(response)
             } else {
-                res.send('It failed dude')
+                response.message = 'Unsuccessfully deleted from database';
+                res.status(status).send(response)
             }
 
             client.close()
@@ -154,7 +214,6 @@ app.delete('/customerAccounts', jsonParser, (req, res) => {
         })
 
 });
-
 
 var deleteCustomerAccount = async (db, id) => {
     let collection = db.collection(dbCollection);
