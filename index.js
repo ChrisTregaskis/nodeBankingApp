@@ -45,7 +45,8 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
     const newCustomerAccount = {
         account_number: accountNumber,
         branch: branch,
-        customer_name: req.body.customer_name,
+        customer_fname: req.body.customer_fname,
+        customer_sname: req.body.customer_sname,
         balance: req.body.balance
     };
 
