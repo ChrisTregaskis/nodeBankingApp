@@ -51,8 +51,8 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
     const newCustomerAccount = {
         account_number: accountNumber,
         branch: branch,
-        customer_fname: req.body.customer_fname,
-        customer_sname: req.body.customer_sname,
+        customer_fname: reqBody.customer_fname,
+        customer_sname: reqBody.customer_sname,
         balance: req.body.balance
     };
 
@@ -82,6 +82,7 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
                 response.message = 'It failed dude';
                 res.status(status).send(response)
             }
+
             client.close()
 
         })
@@ -108,13 +109,34 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
     let depositAmount = req.body.deposit;
     let withdrawalAmount = req.body.withdrawal;
     let updatedCustomerBalanceData = '';
+    let reqBody = req.body;
+    let status = 500;
+    let response = {
+        "success": false,
+        "message": "err!",
+    };
 
-    if (depositAmount === null) {
-        updatedCustomerBalanceData = withdrawalAmount;
-    } else if (withdrawalAmount === null) {
+    if (!(reqBody.hasOwnProperty('id')) ||
+        !(reqBody.hasOwnProperty('deposit') || reqBody.hasOwnProperty('withdrawal'))) {
+        response.message = 'Document id and either deposit or withdrawal values are required';
+        res.status(status).send(response);
+        return
+    }
+
+    if (reqBody.hasOwnProperty('id') &&
+        reqBody.hasOwnProperty('deposit') && reqBody.hasOwnProperty('withdrawal')) {
+        response.message = 'Can not send a deposit and withdrawal at the same time. Must be separate requests';
+        res.status(status).send(response);
+        return
+    }
+
+    if (reqBody.hasOwnProperty('id') && reqBody.hasOwnProperty('deposit')) {
         updatedCustomerBalanceData = depositAmount;
+    } else if (reqBody.hasOwnProperty('id') && reqBody.hasOwnProperty('withdrawal')) {
+        updatedCustomerBalanceData = withdrawalAmount;
     } else {
-        res.send('deposit and withdrawal values empty');
+        response.message = 'Missing either id, deposit or withdrawal';
+        res.status(status).send(response);
         return
     }
 
@@ -127,9 +149,13 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
             let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
 
             if(customerBalance.modifiedCount === 1) {
-                res.send('Customer balance updated!')
+                response.success = true;
+                response.message = 'Customer balance updated!';
+                status = 200;
+                res.status(status).send(response)
             } else {
-                res.send('It failed dude')
+                response.message = 'modifiedCount 0. Failed to update.';
+                res.status(status).send(response)
             }
 
             client.close()
