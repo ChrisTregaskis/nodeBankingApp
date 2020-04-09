@@ -23,9 +23,11 @@ POST
 - Sends: 
   - `{ "customer_fname": "string", "customer_sname": "string", "balance": number }`
 - Returns:
-    - if successful, `status 200`
+    - if successful 
+        - `status 200`
         - `{ "success": true, "message": "New customer account added!" }`  
-    - if unsuccessful, `status 500` 
+    - if unsuccessful
+        - `status 500` 
         - `{ "success": false, "message": "First name, surname and balance are required" }`
     
 
