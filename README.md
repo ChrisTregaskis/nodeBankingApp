@@ -31,6 +31,7 @@ POST
         - `{ "success": false, "message": "First name, surname and balance are required" }`
     
 
+
 **/customerAccounts**
 
 PUT
@@ -55,6 +56,7 @@ PUT
 	- if data base failed to update
 	    - `{ "success": false, "message": "modifiedCount 0. Failed to update." }`
 		
+
 
 **/customerAccounts**
  
