@@ -72,7 +72,7 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
 
 });
 
-//create insertNewCustomerAccount
+//create insertNewCustomerAccount function
 var insertNewCustomerAccount = async (db, newCustomerAccountToSend) => {
     let collection = db.collection(dbCollection);
     let result = await collection.insertOne(newCustomerAccountToSend);
@@ -85,10 +85,26 @@ function generateAccountNumber() {
 }
 
 
+//------------------- Update customer balance route -------------------//
+
+app.put('/customerAccounts', jsonParser, (req, res) => {
+
+    //grab id, deposit and withdrawal from body
+
+
+    //connect to mongodb ASYNC
+
+
+        //call AWAIT updateCustomerBalance
 
 
 
+        //res success message following result from await
 
+
+});
+
+//create updateCustomerBalance function
 
 
 
