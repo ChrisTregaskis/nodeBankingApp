@@ -24,12 +24,15 @@ POST
 	- if unsuccessful 
 		- `'It failed dude'`
     
+
 **/customerAccounts**
 
 PUT
 - Updates customer account balance following a deposit/ withdrawal request
 - Required properties:
-    - `id`, `deposit` - default to `null` and `witdrawal` - default to `null`
+    - `id`
+    - `deposit` - default to `null` 
+    - `witdrawal` - default to `null`
 - Sends an array of:
     - `{ "id": "string", "deposit": null or number, "withdrawal": null or number }` 
 - Returns:
