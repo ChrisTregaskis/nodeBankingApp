@@ -6,31 +6,91 @@ const app = express();
 const port = 8080;
 
 const url = 'mongodb://localhost:27017';
+const dbName = 'chrispyBank';
+const dbCollection = 'customerAccounts';
 
-//See all accounts route
+//------------------- See all accounts route -------------------//
+
 app.get('/customerAccounts', (req, res) => {
 
-    //db connection
+    //db connection with ASYNC callback
     MongoClient.connect(url,
         { useUnifiedTopology: true },
         async (err, client) => {
             console.log('connected correctly to mongodb');
-            let db = client.db('chrispyBank');
+            let db = client.db(dbName);
 
-            //call get method - add await
+            //call get method - add AWAIT
             let customerAccounts = await getCustomerAccounts(db);
 
             //return response json with result of get method
-            res.json(customerAccounts);
+            res.json({"customerAccounts": customerAccounts});
     })
 
 });
 
 var getCustomerAccounts = async (db) => {
-    let collection = db.collection('customerAccounts');
+    let collection = db.collection(dbCollection);
     let result = await collection.find({}).toArray();
     return result;
 };
+
+//------------------- Add new customer account route -------------------//
+
+app.post('/customerAccounts', jsonParser, (req, res) => {
+
+    let branch = "Chrispy SW";
+    let accountNumber = generateAccountNumber();
+
+    //create new customer account to pass in
+    const newCustomerAccount = {
+        account_number: accountNumber,
+        branch: branch,
+        customer_name: req.body.customer_name,
+        balance: req.body.balance
+    };
+
+    //connect to mongodb ASYNC
+    MongoClient.connect(url,
+        { useNewUrlParser: true, useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
+
+            //call AWAIT insertNewCustomerAccount
+            let createCustomerAccount = await insertNewCustomerAccount(db, newCustomerAccount);
+
+            //res success message following result from await
+            if(createCustomerAccount.insertedCount === 1) {
+                res.send('New customer account added!')
+            } else {
+                res.send('It failed dude')
+            }
+            client.close()
+
+        })
+
+});
+
+//create insertNewCustomerAccount
+var insertNewCustomerAccount = async (db, newCustomerAccountToSend) => {
+    let collection = db.collection(dbCollection);
+    let result = await collection.insertOne(newCustomerAccountToSend);
+    return result;
+};
+
+//create random number generator 9 digits
+function generateAccountNumber() {
+    return Math.floor(Math.random() * 1000000000);
+}
+
+
+
+
+
+
+
+
 
 
 
