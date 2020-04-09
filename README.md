@@ -52,7 +52,7 @@ PUT
 	        - `{ "success": false, "message": "Document id and either deposit or withdrawal values are required" }`
 	    - trying to send deposit and withdrawal at the same time
 	        - `{ "success": false, "message": "Can not send a deposit and withdrawal at the same time. Must be separate requests" }`
-	    - if data base failed to update
+	    - if database failed to update
 	        - `{ "success": false, "message": "modifiedCount 0. Failed to update." }`
 		
 
@@ -64,7 +64,12 @@ DELETE
 - Requires and sends:
     - `{ 'id' : number }` 
 - Returns:
-	- if successful
-		- `'Customer account deleted!'`  
-	- if unsuccessful 
-		- `'It failed dude'`
+    - if successful
+        - `status 200`
+        - `{ "success": true, "message": "Customer account successfully deleted!" }`  
+    - if unsuccessful 
+        - `status 500`
+	- missing an id input
+	    - `{ "success": false, "message": "Document Id required in order to delete account" }`
+	- if database failed to delete
+	    - `{ "success": false, "message": "Unsuccessfully deleted from database" }`
