@@ -126,6 +126,7 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
             } else {
                 res.send('It failed dude')
             }
+
             client.close()
 
         })
@@ -149,6 +150,23 @@ app.delete('/customerAccounts', jsonParser, (req, res) => {
 
     let id = ObjectId(req.body.id);
 
+    MongoClient.connect(url,
+        { useNewUrlParser: true, useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
+
+            let deletedCustomerAccount = await deleteCustomerAccount(db, id);
+
+            if(deletedCustomerAccount.deletedCount === 1) {
+                res.send('Customer account deleted!')
+            } else {
+                res.send('It failed dude')
+            }
+
+            client.close()
+
+        })
 });
 
 
@@ -157,20 +175,6 @@ var deleteCustomerAccount = async (db, id) => {
     let result = await collection.deleteOne({ _id: id });
     return result
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
