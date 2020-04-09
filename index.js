@@ -11,18 +11,18 @@ const url = 'mongodb://localhost:27017';
 
 app.get('/customerAccounts', (req, res) => {
 
-    //db connection
+    //db connection with ASYNC callback
     MongoClient.connect(url,
         { useUnifiedTopology: true },
         async (err, client) => {
             console.log('connected correctly to mongodb');
             let db = client.db('chrispyBank');
 
-            //call get method - add await
+            //call get method - add AWAIT
             let customerAccounts = await getCustomerAccounts(db);
 
             //return response json with result of get method
-            res.json(customerAccounts);
+            res.json({"customerAccounts": customerAccounts});
     })
 
 });
@@ -37,18 +37,47 @@ var getCustomerAccounts = async (db) => {
 
 app.post('/customerAccounts', jsonParser, (req, res) => {
 
+    let branch = "Chrispy SW";
+    let accountNumber = 1234567890;
+
     //create new customer account to pass in
+    const newCustomerAccount = {
+        account_number: accountNumber,
+        branch: branch,
+        customer_name: req.body.name,
+        balance: req.body.balance
+    };
 
+    //connect to mongodb ASYNC
+    MongoClient.connect(url,
+        { useNewUrlParser: true, useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db('chrispyBank');
 
-    //connect to mongodb async
+            //call AWAIT insertNewCustomerAccount
+            let createCustomerAccount = await insertNewCustomerAccount(db, newCustomerAccount);
 
-        //call await insertNewCustomerAccount
+            //res success message following result from await
+            // ERROR! how do I access docs.insertedCount? currently getting
+            // "UnhandledPromiseRejectionWarning: ReferenceError: docs is not defined"
+            if(docs.insertedCount === 1) {
+                res.send('New customer account added!')
+            } else {
+                res.send('It failed dude')
+            }
+            client.close()
 
+        })
 
 });
 
 //create insertNewCustomerAccount
-
+var insertNewCustomerAccount = async (db, newCustomerAccountToSend) => {
+    let collection = db.collection('/customerAccounts');
+    let result = await collection.insertOne(newCustomerAccountToSend);
+    return result;
+};
 
 //create random number generator 10 digits
 
