@@ -50,7 +50,8 @@ PUT
     - if unsuccessful, either of the following, depending on error:
    	- `status 500`
 	- missing id or either deposit or withdrawal
-            - `{ "success": false, "message": "Document id and either deposit or withdrawal values are required" }`
+            -
+	    - `{ "success": false, "message": "Document id and either deposit or withdrawal values are required" }`
 	- trying to send deposit and withdrawal at the same time
 	    - `{ "success": false, "message": "Can not send a deposit and withdrawal at the same time. Must be separate requests" }`
 	- if data base failed to update
