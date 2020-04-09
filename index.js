@@ -1,5 +1,6 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectID;
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const app = express();
@@ -89,25 +90,57 @@ function generateAccountNumber() {
 
 app.put('/customerAccounts', jsonParser, (req, res) => {
 
+    let id = ObjectId(req.body.id);
+    let depositAmount = req.body.deposit;
+    let withdrawalAmount = req.body.withdrawal;
+    console.log(id);
+    console.log(depositAmount);
+    console.log(withdrawalAmount);
+
     //grab id, deposit and withdrawal from body
+    let updatedCustomerBalanceData = '';
+
+    //check if a deposit or withdrawal
+    if (depositAmount === null) {
+        updatedCustomerBalanceData = withdrawalAmount;
+    } else if (withdrawalAmount === null) {
+        updatedCustomerBalanceData = depositAmount;
+    } else {
+        res.send('deposit and withdrawal values empty');
+        return
+    }
 
 
     //connect to mongodb ASYNC
+    MongoClient.connect(url,
+        { useNewUrlParser: true, useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
 
+            //call AWAIT updateCustomerBalance
+            let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
 
-        //call AWAIT updateCustomerBalance
+            //res success message following result from await
+            if(customerBalance.modifiedCount === 1) {
+                res.send('Customer balance updated!')
+            } else {
+                res.send('It failed dude')
+            }
+            client.close()
 
-
-
-        //res success message following result from await
-
+        })
 
 });
 
 //create updateCustomerBalance function
-
-
-
-
+var updateCustomerBalance = async (db, id, updatedCustomerBalanceData) => {
+    let collection = db.collection(dbCollection);
+    let result = await collection.updateOne(
+        { _id: id },
+        { $inc: { balance: updatedCustomerBalanceData } }
+    );
+    return result;
+};
 
 app.listen(port, () => console.log(`nodeBankingApp listening at http://localhost:${port}`));
