@@ -16,13 +16,17 @@ Exercise building a simple banking app using node and mongoDB
 
 POST
 - Creates a new customer account
-- Requires and sends: 
-  - `{ "customer_name": "string", "balance": number }`
+- Required
+    - customer's first name `customer_fname`
+    - customer's surname `customer_sname`
+    - balance `balance`
+- Sends: 
+  - `{ "customer_fname": "string", "customer_sname": "string", "balance": number }`
 - Returns:
-	- if successful
-		- `'New customer account added!'`  
-	- if unsuccessful 
-		- `'It failed dude'`
+    - if successful, `status 200`
+        - `{ "success": true, "message": "New customer account added!" }`  
+    - if unsuccessful, `status 500` 
+        - `{ "success": false, "message": "First name, surname and balance are required" }`
     
 
 **/customerAccounts**
@@ -36,10 +40,10 @@ PUT
 - Sends an array of:
     - `{ "id": "string", "deposit": null or number, "withdrawal": null or number }` 
 - Returns:
-	- if successful
-		- `'Customer balance updated!'`  
-	- if unsuccessful 
-		- `'It failed dude'`
+    - if successful
+        - `'Customer balance updated!'`  
+    - if unsuccessful 
+        - `'It failed dude'`
 		
 
 **/customerAccounts**
