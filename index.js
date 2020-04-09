@@ -10,6 +10,7 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'chrispyBank';
 const dbCollection = 'customerAccounts';
 
+
 //------------------- See all accounts route -------------------//
 
 app.get('/customerAccounts', (req, res) => {
@@ -35,6 +36,7 @@ var getCustomerAccounts = async (db) => {
     let result = await collection.find({}).toArray();
     return result;
 };
+
 
 //------------------- Add new customer account route -------------------//
 
@@ -93,9 +95,6 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
     let id = ObjectId(req.body.id);
     let depositAmount = req.body.deposit;
     let withdrawalAmount = req.body.withdrawal;
-    console.log(id);
-    console.log(depositAmount);
-    console.log(withdrawalAmount);
 
     //grab id, deposit and withdrawal from body
     let updatedCustomerBalanceData = '';
@@ -142,5 +141,39 @@ var updateCustomerBalance = async (db, id, updatedCustomerBalanceData) => {
     );
     return result;
 };
+
+
+//------------------- Update customer balance route -------------------//
+
+app.delete('/customerAccounts', jsonParser, (req, res) => {
+
+    let id = ObjectId(req.body.id);
+
+});
+
+
+var deleteCustomerAccount = async (db, id) => {
+    let collection = db.collection(dbCollection);
+    let result = await collection.deleteOne({ _id: id });
+    return result
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(port, () => console.log(`nodeBankingApp listening at http://localhost:${port}`));
