@@ -2,8 +2,6 @@ const express = require('express');
 const app = express();
 const port = 8080;
 
-const url = 'mongodb://localhost:27017';
-
 
 
 
