@@ -7,7 +7,8 @@ const port = 8080;
 
 const url = 'mongodb://localhost:27017';
 
-//See all accounts route
+//------------------- See all accounts route -------------------//
+
 app.get('/customerAccounts', (req, res) => {
 
     //db connection
@@ -31,6 +32,34 @@ var getCustomerAccounts = async (db) => {
     let result = await collection.find({}).toArray();
     return result;
 };
+
+//------------------- Add new customer account route -------------------//
+
+app.post('/customerAccounts', jsonParser, (req, res) => {
+
+    //create new customer account to pass in
+
+
+    //connect to mongodb async
+
+        //call await insertNewCustomerAccount
+
+
+});
+
+//create insertNewCustomerAccount
+
+
+//create random number generator 10 digits
+
+
+
+
+
+
+
+
+
 
 
 
