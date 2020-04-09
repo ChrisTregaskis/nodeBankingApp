@@ -10,21 +10,19 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'chrispyBank';
 const dbCollection = 'customerAccounts';
 
+
 //------------------- See all accounts route -------------------//
 
 app.get('/customerAccounts', (req, res) => {
 
-    //db connection with ASYNC callback
     MongoClient.connect(url,
         { useUnifiedTopology: true },
         async (err, client) => {
             console.log('connected correctly to mongodb');
             let db = client.db(dbName);
 
-            //call get method - add AWAIT
             let customerAccounts = await getCustomerAccounts(db);
 
-            //return response json with result of get method
             res.json({"customerAccounts": customerAccounts});
     })
 
@@ -36,6 +34,7 @@ var getCustomerAccounts = async (db) => {
     return result;
 };
 
+
 //------------------- Add new customer account route -------------------//
 
 app.post('/customerAccounts', jsonParser, (req, res) => {
@@ -43,7 +42,6 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
     let branch = "Chrispy SW";
     let accountNumber = generateAccountNumber();
 
-    //create new customer account to pass in
     const newCustomerAccount = {
         account_number: accountNumber,
         branch: branch,
@@ -51,17 +49,14 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
         balance: req.body.balance
     };
 
-    //connect to mongodb ASYNC
     MongoClient.connect(url,
         { useNewUrlParser: true, useUnifiedTopology: true },
         async (err, client) => {
             console.log('connected correctly to mongodb');
             let db = client.db(dbName);
 
-            //call AWAIT insertNewCustomerAccount
             let createCustomerAccount = await insertNewCustomerAccount(db, newCustomerAccount);
 
-            //res success message following result from await
             if(createCustomerAccount.insertedCount === 1) {
                 res.send('New customer account added!')
             } else {
@@ -73,14 +68,13 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
 
 });
 
-//create insertNewCustomerAccount function
 var insertNewCustomerAccount = async (db, newCustomerAccountToSend) => {
     let collection = db.collection(dbCollection);
     let result = await collection.insertOne(newCustomerAccountToSend);
     return result;
 };
 
-//create random number generator 9 digits
+//Random 9 digit number for account number
 function generateAccountNumber() {
     return Math.floor(Math.random() * 1000000000);
 }
@@ -93,14 +87,8 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
     let id = ObjectId(req.body.id);
     let depositAmount = req.body.deposit;
     let withdrawalAmount = req.body.withdrawal;
-    console.log(id);
-    console.log(depositAmount);
-    console.log(withdrawalAmount);
-
-    //grab id, deposit and withdrawal from body
     let updatedCustomerBalanceData = '';
 
-    //check if a deposit or withdrawal
     if (depositAmount === null) {
         updatedCustomerBalanceData = withdrawalAmount;
     } else if (withdrawalAmount === null) {
@@ -110,30 +98,26 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
         return
     }
 
-
-    //connect to mongodb ASYNC
     MongoClient.connect(url,
         { useNewUrlParser: true, useUnifiedTopology: true },
         async (err, client) => {
             console.log('connected correctly to mongodb');
             let db = client.db(dbName);
 
-            //call AWAIT updateCustomerBalance
             let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
 
-            //res success message following result from await
             if(customerBalance.modifiedCount === 1) {
                 res.send('Customer balance updated!')
             } else {
                 res.send('It failed dude')
             }
+
             client.close()
 
         })
 
 });
 
-//create updateCustomerBalance function
 var updateCustomerBalance = async (db, id, updatedCustomerBalanceData) => {
     let collection = db.collection(dbCollection);
     let result = await collection.updateOne(
@@ -142,5 +126,43 @@ var updateCustomerBalance = async (db, id, updatedCustomerBalanceData) => {
     );
     return result;
 };
+
+
+//------------------- Update customer balance route -------------------//
+
+app.delete('/customerAccounts', jsonParser, (req, res) => {
+
+    let id = ObjectId(req.body.id);
+
+    MongoClient.connect(url,
+        { useNewUrlParser: true, useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
+
+            let deletedCustomerAccount = await deleteCustomerAccount(db, id);
+
+            if(deletedCustomerAccount.deletedCount === 1) {
+                res.send('Customer account deleted!')
+            } else {
+                res.send('It failed dude')
+            }
+
+            client.close()
+
+        })
+
+});
+
+
+var deleteCustomerAccount = async (db, id) => {
+    let collection = db.collection(dbCollection);
+    let result = await collection.deleteOne({ _id: id });
+    return result
+};
+
+
+
+
 
 app.listen(port, () => console.log(`nodeBankingApp listening at http://localhost:${port}`));
