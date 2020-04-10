@@ -108,6 +108,7 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
     let depositAmount = req.body.deposit;
     let withdrawalAmount = req.body.withdrawal;
     let updatedCustomerBalanceData = '';
+    let customerBalance = '';
     let reqBody = req.body;
     let status = 500;
     let response = {
@@ -115,6 +116,7 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
         "message": "err!",
     };
 
+    //check if req has id and either deposit or withdrawal
     if (!(reqBody.hasOwnProperty('id')) ||
         !(reqBody.hasOwnProperty('deposit') || reqBody.hasOwnProperty('withdrawal'))) {
         response.message = 'Document id and either deposit or withdrawal values are required';
@@ -122,6 +124,7 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
         return
     }
 
+    //check if trying to send a deposit and withdrawal in same req
     if (reqBody.hasOwnProperty('id') &&
         reqBody.hasOwnProperty('deposit') && reqBody.hasOwnProperty('withdrawal')) {
         response.message = 'Can not send a deposit and withdrawal at the same time. Must be separate requests';
@@ -129,6 +132,7 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
         return
     }
 
+    //allocate amount to effect customer balance
     if (reqBody.hasOwnProperty('id') && reqBody.hasOwnProperty('deposit')) {
         updatedCustomerBalanceData = depositAmount;
     } else if (reqBody.hasOwnProperty('id') && reqBody.hasOwnProperty('withdrawal')) {
@@ -139,15 +143,43 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
         return
     }
 
+    //make sure req doesn't try withdrawing a negative number
+    if (reqBody.hasOwnProperty('withdrawal')) {
+        if (withdrawalAmount < 0) {
+            response.message = 'Can not withdraw a negative value';
+            res.status(status).send(response);
+            return
+        }
+    }
+
+    //db put request actioned if all above checks passed
     MongoClient.connect(url,
     { useNewUrlParser: true, useUnifiedTopology: true },
     async (err, client) => {
         console.log('connected correctly to mongodb');
         let db = client.db(dbName);
 
-        let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
+        if (reqBody.hasOwnProperty('deposit')) {
+            customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
+        }
 
-        if(customerBalance.modifiedCount === 1) {
+        if (reqBody.hasOwnProperty('withdrawal')) {
+
+            let customerAccount = await getCustomerAccountBalance(db, id);
+            let currentBalance = customerAccount[0].balance;
+            let checkFunds = currentBalance - withdrawalAmount;
+            updatedCustomerBalanceData = withdrawalAmount * -1;
+
+            if (checkFunds >= 0) {
+                customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
+            } else {
+                response.message = `Unsuccessful. Only ${currentBalance} available.`;
+                res.status(status).send(response)
+            }
+            
+        }
+
+        if (customerBalance.modifiedCount === 1) {
             response.success = true;
             response.message = 'Customer balance updated!';
             status = 200;
@@ -172,6 +204,11 @@ var updateCustomerBalance = async (db, id, updatedCustomerBalanceData) => {
     return result;
 };
 
+var getCustomerAccountBalance = async (db, id) => {
+        let collection = db.collection(dbCollection);
+        let result = await collection.find({ _id: id }).toArray();
+        return result;
+};
 
 //------------------- Hard-Delete customer account route -------------------//
 
@@ -257,12 +294,13 @@ app.get('/customerAccounts/filter', (req, res) => {
 
             res.json({"customerAccounts": customerAccounts});
         })
+
     } else {
         response.message = 'Unsuccessful. Api expecting filterType to either be \'less\' or \'greater\' ';
         res.status(status).send(response);
         return
     }
-    
+
 });
 
 var getCusAccountsLessThan = async (db, filterValue) => {
