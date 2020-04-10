@@ -108,6 +108,7 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
     let depositAmount = req.body.deposit;
     let withdrawalAmount = req.body.withdrawal;
     let updatedCustomerBalanceData = '';
+    let customerBalance = '';
     let reqBody = req.body;
     let status = 500;
     let response = {
@@ -159,20 +160,10 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
         let db = client.db(dbName);
 
         if (reqBody.hasOwnProperty('deposit')) {
+            customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
+        }
 
-            let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
-
-            if (customerBalance.modifiedCount === 1) {
-                response.success = true;
-                response.message = 'Customer balance updated!';
-                status = 200;
-                res.status(status).send(response)
-            } else {
-                response.message = 'modifiedCount 0. Failed to update.';
-                res.status(status).send(response)
-            }
-
-        } else if (reqBody.hasOwnProperty('withdrawal')) {
+        if (reqBody.hasOwnProperty('withdrawal')) {
 
             let customerAccount = await getCustomerAccountBalance(db, id);
             let currentBalance = customerAccount[0].balance;
@@ -180,27 +171,22 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
             updatedCustomerBalanceData = withdrawalAmount * -1;
 
             if (checkFunds >= 0) {
-
-                let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
-
-                if (customerBalance.modifiedCount === 1) {
-                    response.success = true;
-                    response.message = 'Customer balance updated!';
-                    status = 200;
-                    res.status(status).send(response)
-                } else {
-                    response.message = 'modifiedCount 0. Failed to update.';
-                    res.status(status).send(response)
-                }
-
+                customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
             } else {
                 response.message = `Unsuccessful. Only ${currentBalance} available.`;
                 res.status(status).send(response)
             }
+            
+        }
+
+        if (customerBalance.modifiedCount === 1) {
+            response.success = true;
+            response.message = 'Customer balance updated!';
+            status = 200;
+            res.status(status).send(response)
         } else {
-            response.message = 'Missing either deposit or withdrawal';
-            res.status(status).send(response);
-            return
+            response.message = 'modifiedCount 0. Failed to update.';
+            res.status(status).send(response)
         }
 
         client.close()
