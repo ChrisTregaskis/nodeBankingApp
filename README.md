@@ -73,3 +73,33 @@ DELETE
 	    - `{ "success": false, "message": "Document Id required in order to delete account" }`
 	- if database failed to delete
 	    - `{ "success": false, "message": "Unsuccessfully deleted from database" }`
+	    
+	    
+**/customerAccounts/filter**
+ 
+GET
+- Retrieves customer accounts that are either less than or greater than a given value
+- Requires keys and values:
+    - `filterType` = string
+        - value of filterType must either be `less` OR `greater`
+    - `filterValue` = number
+- To send example: `/filter?filterType=less&filterValue=10000`
+- Returns:
+    - if successful
+        - `status 200`
+        - `{ "customerAccounts": [
+		{
+		    "_id": "5e8eee8634a11e4cf60e8240",
+		    "account_number": 225123421,
+		    "branch": "Chrispy SW",
+		    "customer_fname": "Gemma",
+		    "customer_sname": "Tiel",
+		    "balance": 24300
+		}
+	]}`  
+    - if unsuccessful 
+        - `status 500`
+	- `{
+    	"success": false,
+    	"message": "Unsuccessful. Api expecting filterType to either be 'less' or 'greater' "
+	}`
