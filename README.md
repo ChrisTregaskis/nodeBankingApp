@@ -79,11 +79,11 @@ DELETE
  
 GET
 - Retrieves customer accounts that are either less than or greater than a given value
-- Requires key and values:
+- Requires keys and values:
     - `filterType` = string
         - value of filterType must either be `less` OR `greater`
     - `filterValue` = number
-- To send example: `/filter?filterType=top&filterValue=10000`
+- To send example: `/filter?filterType=less&filterValue=10000`
 - Returns:
     - if successful
         - `status 200`
