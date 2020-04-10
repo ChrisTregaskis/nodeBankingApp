@@ -16,14 +16,14 @@ const dbCollection = 'customerAccounts';
 app.get('/customerAccounts', (req, res) => {
 
     MongoClient.connect(url,
-        { useUnifiedTopology: true },
-        async (err, client) => {
-            console.log('connected correctly to mongodb');
-            let db = client.db(dbName);
+    { useUnifiedTopology: true },
+    async (err, client) => {
+        console.log('connected correctly to mongodb');
+        let db = client.db(dbName);
 
-            let customerAccounts = await getCustomerAccounts(db);
+        let customerAccounts = await getCustomerAccounts(db);
 
-            res.json({"customerAccounts": customerAccounts});
+        res.json({"customerAccounts": customerAccounts});
     })
 
 });
@@ -66,26 +66,26 @@ app.post('/customerAccounts', jsonParser, (req, res) => {
     }
 
     MongoClient.connect(url,
-        { useNewUrlParser: true, useUnifiedTopology: true },
-        async (err, client) => {
-            console.log('connected correctly to mongodb');
-            let db = client.db(dbName);
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    async (err, client) => {
+        console.log('connected correctly to mongodb');
+        let db = client.db(dbName);
 
-            let createCustomerAccount = await insertNewCustomerAccount(db, newCustomerAccount);
+        let createCustomerAccount = await insertNewCustomerAccount(db, newCustomerAccount);
 
-            if(createCustomerAccount.insertedCount === 1) {
-                response.success = true;
-                response.message = 'New customer account added!';
-                status = 200;
-                res.status(status).send(response)
-            } else {
-                response.message = 'It failed dude';
-                res.status(status).send(response)
-            }
+        if(createCustomerAccount.insertedCount === 1) {
+            response.success = true;
+            response.message = 'New customer account added!';
+            status = 200;
+            res.status(status).send(response)
+        } else {
+            response.message = 'It failed dude';
+            res.status(status).send(response)
+        }
 
-            client.close()
+        client.close()
 
-        })
+    })
 
 });
 
@@ -140,26 +140,26 @@ app.put('/customerAccounts', jsonParser, (req, res) => {
     }
 
     MongoClient.connect(url,
-        { useNewUrlParser: true, useUnifiedTopology: true },
-        async (err, client) => {
-            console.log('connected correctly to mongodb');
-            let db = client.db(dbName);
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    async (err, client) => {
+        console.log('connected correctly to mongodb');
+        let db = client.db(dbName);
 
-            let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
+        let customerBalance = await updateCustomerBalance(db, id, updatedCustomerBalanceData);
 
-            if(customerBalance.modifiedCount === 1) {
-                response.success = true;
-                response.message = 'Customer balance updated!';
-                status = 200;
-                res.status(status).send(response)
-            } else {
-                response.message = 'modifiedCount 0. Failed to update.';
-                res.status(status).send(response)
-            }
+        if(customerBalance.modifiedCount === 1) {
+            response.success = true;
+            response.message = 'Customer balance updated!';
+            status = 200;
+            res.status(status).send(response)
+        } else {
+            response.message = 'modifiedCount 0. Failed to update.';
+            res.status(status).send(response)
+        }
 
-            client.close()
+        client.close()
 
-        })
+    })
 
 });
 
@@ -192,26 +192,26 @@ app.delete('/customerAccounts', jsonParser, (req, res) => {
     }
 
     MongoClient.connect(url,
-        { useNewUrlParser: true, useUnifiedTopology: true },
-        async (err, client) => {
-            console.log('connected correctly to mongodb');
-            let db = client.db(dbName);
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    async (err, client) => {
+        console.log('connected correctly to mongodb');
+        let db = client.db(dbName);
 
-            let deletedCustomerAccount = await deleteCustomerAccount(db, id);
+        let deletedCustomerAccount = await deleteCustomerAccount(db, id);
 
-            if(deletedCustomerAccount.deletedCount === 1) {
-                response.success = true;
-                response.message = 'Customer account successfully deleted!';
-                status = 200;
-                res.status(status).send(response)
-            } else {
-                response.message = 'Unsuccessfully deleted from database';
-                res.status(status).send(response)
-            }
+        if(deletedCustomerAccount.deletedCount === 1) {
+            response.success = true;
+            response.message = 'Customer account successfully deleted!';
+            status = 200;
+            res.status(status).send(response)
+        } else {
+            response.message = 'Unsuccessfully deleted from database';
+            res.status(status).send(response)
+        }
 
-            client.close()
+        client.close()
 
-        })
+    })
 
 });
 
@@ -222,7 +222,62 @@ var deleteCustomerAccount = async (db, id) => {
 };
 
 
+//------------------- See customer accounts with balance LESS or GREATER THAN x route -------------------//
 
+app.get('/customerAccounts/filter', (req, res) => {
+
+    let filterType = req.query.filterType;
+    let filterValue = req.query.filterValue;
+    let reqParams = req.query;
+    let status = 500;
+    let response = {
+        "success": false,
+        "message": "err!",
+    };
+
+    if ((reqParams.filterType === 'less') || (reqParams.filterType === 'greater')) {
+
+        MongoClient.connect(url,
+        { useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
+            let customerAccounts = [];
+
+            if (filterType === 'less') {
+                customerAccounts = await getCusAccountsLessThan(db, filterValue);
+                status = 200;
+            } else if (filterType === 'greater') {
+                customerAccounts = await getCusAccountsGreaterThan(db, filterValue);
+                status = 200;
+            } else {
+                response.message = 'Unknown filter type used';
+                res.send(response)
+            }
+
+            res.json({"customerAccounts": customerAccounts});
+        })
+    } else {
+        response.message = 'Unsuccessful. Api expecting filterType to either be \'less\' or \'greater\' ';
+        res.status(status).send(response);
+        return
+    }
+    
+});
+
+var getCusAccountsLessThan = async (db, filterValue) => {
+    let value = Number(filterValue);
+    let collection = db.collection(dbCollection);
+    let result = await collection.find({ balance: { $lt: value } }).toArray();
+    return result;
+};
+
+var getCusAccountsGreaterThan = async (db, filterValue) => {
+    let value = Number(filterValue);
+    let collection = db.collection(dbCollection);
+    let result = await collection.find({ balance: { $gt: value } }).toArray();
+    return result;
+};
 
 
 app.listen(port, () => console.log(`nodeBankingApp listening at http://localhost:${port}`));
