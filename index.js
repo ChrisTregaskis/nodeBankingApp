@@ -222,7 +222,32 @@ var deleteCustomerAccount = async (db, id) => {
 };
 
 
+//------------------- See customer accounts with balance LESS THAN x route -------------------//
 
+app.get('/customerAccounts/filter', (req, res) => {
+
+    let filterType = req.query.filterType;
+    let filterValue = req.query.filterValue;
+
+    MongoClient.connect(url,
+        { useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
+
+            let customerAccounts = await getCusAccountsLessThan(db, filterValue);
+
+            res.json({"customerAccounts": customerAccounts});
+        })
+
+});
+
+var getCusAccountsLessThan = async (db, filterValue) => {
+    let value = Number(filterValue);
+    let collection = db.collection(dbCollection);
+    let result = await collection.find( { balance: { $lt: value } } ).toArray();
+    return result;
+};
 
 
 app.listen(port, () => console.log(`nodeBankingApp listening at http://localhost:${port}`));
