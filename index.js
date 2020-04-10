@@ -294,6 +294,7 @@ app.get('/customerAccounts/filter', (req, res) => {
 
             res.json({"customerAccounts": customerAccounts});
         })
+
     } else {
         response.message = 'Unsuccessful. Api expecting filterType to either be \'less\' or \'greater\' ';
         res.status(status).send(response);
