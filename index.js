@@ -11,7 +11,7 @@ const dbName = 'chrispyBank';
 const dbCollection = 'customerAccounts';
 
 
-//------------------- See all accounts route -------------------//
+//------------------- See all customer accounts route -------------------//
 
 app.get('/customerAccounts', (req, res) => {
 
