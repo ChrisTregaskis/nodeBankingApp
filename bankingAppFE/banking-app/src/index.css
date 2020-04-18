@@ -1,0 +1,17 @@
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Nanum Gothic", sans-serif;
+
+}
+
+h1, h2, h3, h4 {
+  font-family: brandon-grotesque, sans-serif;
+}
