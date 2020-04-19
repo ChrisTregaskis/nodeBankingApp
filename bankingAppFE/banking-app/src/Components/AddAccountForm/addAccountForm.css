@@ -1,0 +1,15 @@
+.addAccountContainer form {
+    margin: 20px auto;
+}
+
+.formInputs {
+    margin: 10px 10px 10px 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #000;
+}
+
+.addAccountContainer p {
+    color: #2ecc71;
+}
