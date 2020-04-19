@@ -8,7 +8,8 @@ class AddAccountForm extends React.Component {
         this.state = {
             firstName: '',
             surname: '',
-            balance: 'Enter balance...'
+            balance: 'Enter balance...',
+            response: ''
         };
     }
 
@@ -32,11 +33,8 @@ class AddAccountForm extends React.Component {
             "balance": parseInt(this.state.balance)
         };
 
-        console.log(data)
-
         await this.sendRequest('http://localhost:8080/customerAccounts', 'POST', data)
     };
-
 
     sendRequest = async (url, requestMethod, data) => {
         let requestData = JSON.stringify(data);
@@ -50,8 +48,7 @@ class AddAccountForm extends React.Component {
         });
 
         let responseData = await response.json();
-        //use set state in order to rerender a box that holds the success/failure message
-        console.log(responseData);
+        this.setState({response: responseData.message});
 
     };
 
@@ -68,6 +65,7 @@ class AddAccountForm extends React.Component {
                            className="col-md-4 formInputs" required/>
                     <input type="submit" value="Add Account" className="btn btn-success"/>
                 </form>
+                <p>{this.state.response}</p>
             </div>
         );
     }

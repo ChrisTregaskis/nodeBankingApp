@@ -9,3 +9,7 @@
     border-right: none;
     border-bottom: 1px solid #000;
 }
+
+.addAccountContainer p {
+    color: #2ecc71;
+}
