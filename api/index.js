@@ -2,6 +2,7 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectID;
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const jsonParser = bodyParser.json();
 const app = express();
 const port = 8080;
@@ -10,6 +11,7 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'chrispyBank';
 const dbCollection = 'customerAccounts';
 
+app.use(cors());
 
 //------------------- See all customer accounts route -------------------//
 
@@ -38,14 +40,13 @@ var getCustomerAccounts = async (db) => {
 //------------------- Add new customer account route -------------------//
 
 app.post('/customerAccounts', jsonParser, (req, res) => {
-
     let branch = "Chrispy SW";
     let accountNumber = generateAccountNumber();
     let reqBody = req.body;
     let status = 500;
     let response = {
         "success": false,
-        "message": "err!",
+        "message": "err!"
     };
 
     const newCustomerAccount = {
