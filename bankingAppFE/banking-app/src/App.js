@@ -6,7 +6,7 @@ import CustomerAccountsTable from "./Components/CustomerAccountsTable/CustomerAc
 function App() {
   return (
     <div className="App container">
-      <h1>Admin Page.</h1>
+      <h1>Customer Accounts Admin Panel.</h1>
         <AddAccountForm/>
         <CustomerAccountsTable/>
     </div>
