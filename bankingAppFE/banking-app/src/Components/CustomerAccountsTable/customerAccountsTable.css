@@ -5,3 +5,7 @@
 .updateBalance {
     cursor: pointer;
 }
+
+.updateBalanceInput {
+    display: inline-block;
+}

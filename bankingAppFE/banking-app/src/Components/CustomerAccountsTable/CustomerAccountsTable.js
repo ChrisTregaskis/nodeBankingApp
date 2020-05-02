@@ -1,6 +1,7 @@
 import React from "react";
 import './customerAccountsTable.css';
-const columnHeader = ['First-name', 'Surname', 'Balance', 'Deposit', 'Withdraw', 'Delete'];
+import CustomerAccountModal from "../CustomerAccountModal/CustomerAccountModal";
+const columnHeader = ['First-name', 'Surname', 'Balance', 'Update'];
 
 class CustomerAccountsTable extends React.Component {
     constructor(props) {
@@ -9,7 +10,8 @@ class CustomerAccountsTable extends React.Component {
         this.state = {
             customerAccPackage: {
                 "customerAccounts": []
-            }
+            },
+            accountInfo: {}
         }
     }
 
@@ -34,7 +36,7 @@ class CustomerAccountsTable extends React.Component {
 
     generateHeader = () => {
         let result = [];
-        for(var i = 0; i < columnHeader.length; i++) {
+        for(let i = 0; i < columnHeader.length; i++) {
             result.push(<th key={columnHeader[i]}>{columnHeader[i]}</th>)
         }
         return result;
@@ -44,24 +46,40 @@ class CustomerAccountsTable extends React.Component {
         let result = [];
         let tableData = this.state.customerAccPackage.customerAccounts;
 
-        for(var i = 0; i < tableData.length; i++) {
+        for(let i = 0; i < tableData.length; i++) {
             result.push(
-                <tr key={i} data-id={tableData[i]._id}>
+                <tr key={i}>
                     <td key={tableData[i].customer_fname}>{tableData[i].customer_fname}</td>
                     <td key={tableData[i].customer_sname}>{tableData[i].customer_sname}</td>
                     <td key={tableData[i].balance}><span>£</span>{tableData[i].balance}</td>
-                    <td className="text-info updateBalance deposit">deposit</td>
-                    <td className="text-warning updateBalance withdraw">withdraw</td>
-                    <td className="text-danger updateBalance delete">delete</td>
+                    <td className="text-success updateBalance deposit"
+                        data-id={tableData[i]._id}
+                        data-fname={tableData[i].customer_fname}
+                        data-sname={tableData[i].customer_sname}
+                        data-balance={tableData[i].balance}
+                        onClick={this.prepareData}>update</td>
                 </tr>
             )
         }
         return result;
     };
 
+    prepareData = async (e) => {
+        let accountInfo = {
+            "id": e.target.dataset.id,
+            "fname": e.target.dataset.fname,
+            "sname": e.target.dataset.sname,
+            "balance": parseInt(e.target.dataset.balance)
+        };
+        await this.setState({accountInfo: accountInfo});
+        console.log(this.state.accountInfo)
+    };
+
+
     render() {
         return (
             <div>
+                <CustomerAccountModal accountInfo={this.state.accountInfo}/>
                 <table className="table table-hover">
                     <thead>
                         <tr>
