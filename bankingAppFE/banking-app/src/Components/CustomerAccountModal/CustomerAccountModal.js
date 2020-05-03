@@ -31,7 +31,7 @@ class CustomerAccountModal extends React.Component{
     displayBalance = () => {
         let result = [];
         result.push(
-            <div>
+            <div key="acc-balance-box">
                 <p key="acc-balance-title">Account balance:</p>
                 <h3 key="acc-balance"><span>£</span>{this.props.accountInfo.balance}</h3>
             </div>
