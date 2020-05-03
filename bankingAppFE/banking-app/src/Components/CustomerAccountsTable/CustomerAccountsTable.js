@@ -11,12 +11,17 @@ class CustomerAccountsTable extends React.Component {
             customerAccPackage: {
                 "customerAccounts": []
             },
-            accountInfo: {}
+            accountInfo: {},
+            modalVisible: false
         }
     }
 
     componentDidMount = () => {
         this.fetchCustomerAccounts();
+    };
+
+    updateModalVisible = () => {
+        this.setState({modalVisible: false});
     };
 
     fetchCustomerAccounts = () => {
@@ -71,15 +76,21 @@ class CustomerAccountsTable extends React.Component {
             "sname": e.target.dataset.sname,
             "balance": parseInt(e.target.dataset.balance)
         };
-        await this.setState({accountInfo: accountInfo});
-        console.log(this.state.accountInfo)
+        await this.setState({
+            accountInfo: accountInfo,
+            modalVisible: true
+        });
     };
 
 
     render() {
         return (
             <div>
-                <CustomerAccountModal accountInfo={this.state.accountInfo}/>
+                <CustomerAccountModal
+                    modalVisible={this.state.modalVisible}
+                    updateModalVisible={this.updateModalVisible}
+                    accountInfo={this.state.accountInfo}
+                />
                 <table className="table table-hover">
                     <thead>
                         <tr>

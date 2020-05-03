@@ -6,7 +6,18 @@ class CustomerAccountModal extends React.Component{
         super(props);
 
         this.state = {
-            response: ''
+            response: '',
+            modalClass: 'hidden'
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if(prevProps.modalVisible !== this.props.modalVisible) {
+            if(this.props.modalVisible) {
+                this.setState({modalClass: 'visible'})
+            } else {
+                this.setState({modalClass: 'hidden'})
+            }
         }
     }
 
@@ -54,8 +65,9 @@ class CustomerAccountModal extends React.Component{
     };
 
     render() {
+        let camClasses = 'camContainer ' + this.state.modalClass;
         return (
-            <div className="camContainer">
+            <div className={camClasses}>
                 {this.displayName()}
                 {this.displayBalance()}
                 <form onSubmit={this.handleSubmit}>
@@ -72,7 +84,7 @@ class CustomerAccountModal extends React.Component{
                 </form>
                 <div className="modalResponse">{this.state.response}</div>
                 <button className="btn btn-danger deleteAccount">Delete Account</button>
-                <button className="btn btn-info cancelUpdate">Cancel Update</button>
+                <button className="btn btn-info cancelUpdate" onClick={()=>this.props.updateModalVisible()}>Cancel Update</button>
             </div>
         );
     }
