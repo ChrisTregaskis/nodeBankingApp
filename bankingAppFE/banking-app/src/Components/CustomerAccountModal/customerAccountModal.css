@@ -1,6 +1,11 @@
 .camContainer {
     height: 400px;
     width: 500px;
-    background-color: #ddd;
+    background-color: #ecf0f1;
     border-radius: 5px;
+    text-align: center;
+}
+
+.modalInputNum {
+    display: block;
 }
