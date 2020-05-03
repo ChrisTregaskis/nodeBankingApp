@@ -1,11 +1,26 @@
 .camContainer {
     height: 400px;
     width: 500px;
-    background-color: #ecf0f1;
+    background-color: #34495e;
     border-radius: 5px;
     text-align: center;
+    color: #fff;
 }
 
 .modalInputNum {
     display: block;
+}
+
+.name {
+    padding-top: 10px;
+}
+
+.radioLabel {
+    padding: 5px;
+}
+
+.radioBox {
+    width: 100px;
+    display: inline-block;
+    margin: 0 20px;
 }

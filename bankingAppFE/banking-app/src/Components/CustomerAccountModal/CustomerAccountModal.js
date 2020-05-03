@@ -13,7 +13,7 @@ class CustomerAccountModal extends React.Component{
     displayName = () => {
         let result = [];
         let accountInfo = this.props.accountInfo;
-        result.push(<h3 key="acc-name">{accountInfo.fname} {accountInfo.sname}</h3>);
+        result.push(<h3 key="acc-name" className="name">{accountInfo.fname} {accountInfo.sname}</h3>);
         return result
     };
 
@@ -40,8 +40,6 @@ class CustomerAccountModal extends React.Component{
             this.updateResponse('Please specify how much you would like to deposit or withdraw.')
         }
 
-        
-
     };
 
     updateResponse = (newResponse) => {
@@ -61,11 +59,15 @@ class CustomerAccountModal extends React.Component{
                 {this.displayName()}
                 {this.displayBalance()}
                 <form onSubmit={this.handleSubmit}>
-                    <input type="radio" id="depositRadio" name="updateBalance" value="depositRadio"/>
-                        <label htmlFor="depositRadio" className="text-info">Deposit</label>
-                    <input type="radio" id="withdrawRadio" name="updateBalance" value="withdrawRadio"/>
-                        <label htmlFor="withdrawRadio" className="text-warning">Withdraw</label>
-                    <input className="modalInputNum" type="number"/>
+                    <div className="radioBox">
+                        <input type="radio" id="depositRadio" name="updateBalance" value="depositRadio"/>
+                        <label htmlFor="depositRadio" className="radioLabel">Deposit</label>
+                    </div>
+                    <div className="radioBox">
+                        <input type="radio" id="withdrawRadio" name="updateBalance" value="withdrawRadio"/>
+                        <label htmlFor="withdrawRadio" className="radioLabel">Withdraw</label>
+                    </div>
+                    <input className="modalInputNum" type="number" placeholder="Enter amount..."/>
                     <button type="submit" className="btn btn-success">Submit</button>
                 </form>
                 <button className="btn btn-danger">Delete Account</button>
