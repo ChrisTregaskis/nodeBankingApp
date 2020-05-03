@@ -68,11 +68,11 @@ class CustomerAccountModal extends React.Component{
                         <label htmlFor="withdrawRadio" className="radioLabel">Withdraw</label>
                     </div>
                     <input className="modalInputNum" type="number" placeholder="Enter amount..."/>
-                    <button type="submit" className="btn btn-success">Submit</button>
+                    <button type="submit" className="btn btn-success modalSubmitBtn">Submit</button>
                 </form>
-                <button className="btn btn-danger">Delete Account</button>
-                <button className="btn btn-dark">Cancel Update</button>
-                <div className="text-danger">{this.state.response}</div>
+                <div className="modalResponse">{this.state.response}</div>
+                <button className="btn btn-danger deleteAccount">Delete Account</button>
+                <button className="btn btn-info cancelUpdate">Cancel Update</button>
             </div>
         );
     }
