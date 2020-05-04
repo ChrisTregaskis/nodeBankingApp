@@ -39,11 +39,11 @@ class CustomerAccountModal extends React.Component{
         return result
     };
 
-    handleSubmit = (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
         let depositReq = e.target[0].checked;
         let withdrawReq = e.target[1].checked;
-        let amountReq = e.target[2].value;
+        let amountReq = parseInt(e.target[2].value);
         let id = e.target[3].value;
         let data = {};
 
@@ -62,15 +62,21 @@ class CustomerAccountModal extends React.Component{
         } else if (withdrawReq === true) {
             data = {
                 "id": id,
-                "withdraw": amountReq
+                "withdrawal": amountReq
             }
         } else {
             this.updateResponse('deposit and withdrawal request invalid')
         }
 
-        console.log(data)
+        await this.handleFetch(
+            'http://localhost:8080/customerAccounts',
+            'PUT',
+            data
+        )
 
+        await this.props.fetchCustomerAccounts();
         document.getElementById('amount-input').value = 0;
+        this.props.updateModalVisible()
 
     };
 
@@ -86,7 +92,7 @@ class CustomerAccountModal extends React.Component{
         });
 
         let responseData = await response.json();
-        this.props.updateResponse(responseData.Message);
+        this.updateResponse(responseData.message);
     };
 
     updateResponse = (newResponse) => {

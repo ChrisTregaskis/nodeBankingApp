@@ -90,6 +90,7 @@ class CustomerAccountsTable extends React.Component {
                     modalVisible={this.state.modalVisible}
                     updateModalVisible={this.updateModalVisible}
                     accountInfo={this.state.accountInfo}
+                    fetchCustomerAccounts={this.fetchCustomerAccounts}
                 />
                 <table className="table table-hover">
                     <thead>
