@@ -28,12 +28,12 @@ class CustomerAccountModal extends React.Component{
         return result
     };
 
-    displayBalance = () => {
+    displayBalance = (balance) => {
         let result = [];
         result.push(
             <div key="acc-balance-box">
                 <p key="acc-balance-title">Account balance:</p>
-                <h3 key="acc-balance"><span>£</span>{this.props.accountInfo.balance}</h3>
+                <h3 key="acc-balance"><span>£</span><span id="balance-render-box">{balance}</span></h3>
             </div>
         );
         return result
@@ -47,11 +47,12 @@ class CustomerAccountModal extends React.Component{
         let id = e.target[3].value;
         let data = {};
 
-
         if (depositReq === false && withdrawReq === false) {
-            this.updateResponse('Please select either the deposit or request option.')
-        } else if (amountReq === '') {
-            this.updateResponse('Please specify how much you would like to deposit or withdraw.')
+            return this.updateResponse('Please select either the deposit or request option.')
+        }
+
+        if (amountReq === '' || isNaN(amountReq)) {
+            return this.updateResponse('Please specify how much you would like to deposit or withdraw.')
         }
 
         if (depositReq === true) {
@@ -68,15 +69,21 @@ class CustomerAccountModal extends React.Component{
             this.updateResponse('deposit and withdrawal request invalid')
         }
 
-        await this.handleFetch(
+        let updateAccount = await this.handleFetch(
             'http://localhost:8080/customerAccounts',
             'PUT',
             data
-        )
+        );
 
-        await this.props.fetchCustomerAccounts();
-        document.getElementById('amount-input').value = 0;
-        this.props.updateModalVisible()
+        if (updateAccount.success === true) {
+            await this.props.fetchCustomerAccounts();
+            document.getElementById('amount-input').value = '';
+        } else {
+            this.setState({response: updateAccount.message})
+        }
+
+        // Generate a get request for balance of a given ID, then update #balance-render-box with it
+        // document.getElementById('balance-render-box').innerText = this.props.accountInfo.balance
 
     };
 
@@ -93,6 +100,7 @@ class CustomerAccountModal extends React.Component{
 
         let responseData = await response.json();
         this.updateResponse(responseData.message);
+        return responseData;
     };
 
     updateResponse = (newResponse) => {
@@ -111,7 +119,7 @@ class CustomerAccountModal extends React.Component{
         return (
             <div className={camClasses}>
                 {this.displayName()}
-                {this.displayBalance()}
+                {this.displayBalance(this.props.accountInfo.balance)}
                 <form onSubmit={this.handleSubmit}>
                     <div className="radioBox">
                         <input type="radio" id="depositRadio" name="updateBalance" value="depositRadio"/>
@@ -128,7 +136,7 @@ class CustomerAccountModal extends React.Component{
                 </form>
                 <div className="modalResponse">{this.state.response}</div>
                 <button className="btn btn-danger deleteAccount">Delete Account</button>
-                <button className="btn btn-info cancelUpdate" onClick={()=>this.props.updateModalVisible()}>Cancel Update</button>
+                <button className="btn btn-info cancelUpdate" onClick={()=>this.props.updateModalVisible()}>Close Modal</button>
             </div>
         );
     }
