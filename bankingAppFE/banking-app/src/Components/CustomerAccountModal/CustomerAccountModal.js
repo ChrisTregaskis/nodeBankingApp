@@ -44,6 +44,9 @@ class CustomerAccountModal extends React.Component{
         let depositReq = e.target[0].checked;
         let withdrawReq = e.target[1].checked;
         let amountReq = e.target[2].value;
+        let id = e.target[3].value;
+        let data = {};
+
 
         if (depositReq === false && withdrawReq === false) {
             this.updateResponse('Please select either the deposit or request option.')
@@ -51,6 +54,39 @@ class CustomerAccountModal extends React.Component{
             this.updateResponse('Please specify how much you would like to deposit or withdraw.')
         }
 
+        if (depositReq === true) {
+            data = {
+                "id": id,
+                "deposit": amountReq
+            }
+        } else if (withdrawReq === true) {
+            data = {
+                "id": id,
+                "withdraw": amountReq
+            }
+        } else {
+            this.updateResponse('deposit and withdrawal request invalid')
+        }
+
+        console.log(data)
+
+        document.getElementById('amount-input').value = 0;
+
+    };
+
+    handleFetch = async (url, requestMethod, dataToSend) => {
+        let requestData = JSON.stringify(dataToSend);
+
+        const response = await fetch(url, {
+            method: requestMethod.toUpperCase(),
+            body: requestData,
+            headers: {
+                "Content-Type" : "application/json"
+            }
+        });
+
+        let responseData = await response.json();
+        this.props.updateResponse(responseData.Message);
     };
 
     updateResponse = (newResponse) => {
@@ -79,7 +115,9 @@ class CustomerAccountModal extends React.Component{
                         <input type="radio" id="withdrawRadio" name="updateBalance" value="withdrawRadio"/>
                         <label htmlFor="withdrawRadio" className="radioLabel">Withdraw</label>
                     </div>
-                    <input className="modalInputNum" type="number" placeholder="Enter amount..."/>
+                    <label className="amountInput" htmlFor="amountInput">Enter amount...</label>
+                    <input id="amount-input" name="amountInput" className="modalInputNum" type="number"/>
+                    <input type="hidden" name="value" value={this.props.accountInfo.id}/>
                     <button type="submit" className="btn btn-success modalSubmitBtn">Submit</button>
                 </form>
                 <div className="modalResponse">{this.state.response}</div>

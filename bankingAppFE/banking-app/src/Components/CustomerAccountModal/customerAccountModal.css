@@ -1,5 +1,5 @@
 .camContainer {
-    height: 400px;
+    height: 425px;
     width: 500px;
     background-color: #34495e;
     border-radius: 5px;
@@ -58,4 +58,12 @@
     position: relative;
     bottom: 23px;
     right: -100px;
+}
+
+.amountInput {
+    display: block;
+}
+
+#amount-input {
+    text-align: center;
 }
