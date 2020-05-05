@@ -39,7 +39,7 @@ var getCustomerAccounts = async (db) => {
 //------------------- Get a single customer account route -------------------//
 
 app.get('/singleCustomerAccount', jsonParser, (req, res) => {
-    let id = ObjectId(req.body.id);
+    let id = ObjectId(req.query.id);
 
     MongoClient.connect(url,
         { useUnifiedTopology: true },
