@@ -129,6 +129,17 @@ class CustomerAccountModal extends React.Component{
         this.setState({response : ''})
     };
 
+    handleDelete = async (e) => {
+        let id = e.target.value;
+        let objId = {"id": id};
+        await this.handleFetch(
+            'http://localhost:8080/customerAccounts',
+            'DELETE',
+            objId
+        );
+        await this.props.fetchCustomerAccounts()
+    };
+
     render() {
         let camClasses = 'camContainer ' + this.state.modalClass;
         return (
@@ -150,7 +161,7 @@ class CustomerAccountModal extends React.Component{
                     <button type="submit" className="btn btn-success modalSubmitBtn">Submit</button>
                 </form>
                 <div className="modalResponse">{this.state.response}</div>
-                <button className="btn btn-danger deleteAccount">Delete Account</button>
+                <button className="btn btn-danger deleteAccount" value={this.props.accountInfo.id} onClick={this.handleDelete}>Delete Account</button>
                 <button className="btn btn-info cancelUpdate" onClick={()=>this.props.updateModalVisible()}>Close Modal</button>
             </div>
         );
