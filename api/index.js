@@ -36,6 +36,30 @@ var getCustomerAccounts = async (db) => {
     return result;
 };
 
+//------------------- Get a single customer account route -------------------//
+
+app.get('/singleCustomerAccount', jsonParser, (req, res) => {
+    let id = ObjectId(req.body.id);
+
+    MongoClient.connect(url,
+        { useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
+
+            let singleAccount = await getSingleAccount(db, id);
+
+            res.json({"singleAccount": singleAccount});
+        })
+
+});
+
+var getSingleAccount = async (db, id) => {
+    let collection = db.collection(dbCollection);
+    let result = await collection.find({_id: ObjectId(id)}).toArray();
+    return result;
+};
+
 
 //------------------- Add new customer account route -------------------//
 
