@@ -34,6 +34,7 @@ class AddAccountForm extends React.Component {
         };
 
         await this.sendRequest('http://localhost:8080/customerAccounts', 'POST', data)
+        window.location.reload();
     };
 
     sendRequest = async (url, requestMethod, data) => {
