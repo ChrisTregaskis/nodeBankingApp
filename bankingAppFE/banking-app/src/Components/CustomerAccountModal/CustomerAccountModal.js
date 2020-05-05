@@ -33,7 +33,7 @@ class CustomerAccountModal extends React.Component{
         result.push(
             <div key="acc-balance-box">
                 <p key="acc-balance-title">Account balance:</p>
-                <h3 key="acc-balance"><span>£</span><span id="balance-render-box">{balance}</span></h3>
+                <h3 key="acc-balance">£<span id="balance-render-box">{balance}</span></h3>
             </div>
         );
         return result
@@ -45,6 +45,7 @@ class CustomerAccountModal extends React.Component{
         let withdrawReq = e.target[1].checked;
         let amountReq = parseInt(e.target[2].value);
         let id = e.target[3].value;
+        let objId = {"id": id};
         let data = {};
 
         if (depositReq === false && withdrawReq === false) {
@@ -82,9 +83,23 @@ class CustomerAccountModal extends React.Component{
             this.setState({response: updateAccount.message})
         }
 
-        // Generate a get request for balance of a given ID, then update #balance-render-box with it
-        // document.getElementById('balance-render-box').innerText = this.props.accountInfo.balance
+        this.updateModalBalance(objId.id);
 
+    };
+
+    updateModalBalance = (id) => {
+        let balanceBox = document.getElementById('balance-render-box');
+        fetch(`http://localhost:8080/singleCustomerAccount?id=${id}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type" : "application/json"
+            }
+        })
+            .then(data=>data.json())
+            .then((data)=>{
+                console.log(data.singleAccount[0].balance);
+                balanceBox.innerText = data.singleAccount[0].balance
+            })
     };
 
     handleFetch = async (url, requestMethod, dataToSend) => {
