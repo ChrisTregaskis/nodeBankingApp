@@ -9,7 +9,7 @@ class App extends React.Component {
 
     this.state = {
       response: '',
-      customerAccPackage: {
+      filteredCustomerAccPackage: {
         "customerAccounts": []
       }
     }
@@ -38,7 +38,6 @@ class App extends React.Component {
     }
 
     await this.fetchFilteredAccounts(reqUrl);
-    console.log(this.state.customerAccPackage)
 
   };
 
@@ -52,7 +51,7 @@ class App extends React.Component {
     .then(data => data.json())
     .then((data) => {
       this.setState({
-        customerAccPackage: data
+        filteredCustomerAccPackage: data
       })
     })
   };
@@ -90,7 +89,7 @@ class App extends React.Component {
             </div>
           </form>
           <div className="messageBox text-danger">{this.state.response}</div>
-          <CustomerAccountsTable/>
+          <CustomerAccountsTable filteredCustomerAccPackage={this.state.filteredCustomerAccPackage}/>
         </div>
     );
   }
