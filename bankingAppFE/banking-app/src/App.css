@@ -1,0 +1,28 @@
+.App {
+  margin: 20px auto;
+  overflow: auto;
+}
+
+.filterRadioBox {
+  display: inline-block;
+  width: 150px;
+}
+
+.filterInput {
+  display: inline-block;
+  float: left;
+}
+
+.filterInputElement {
+  margin: 0 10px;
+}
+
+.messageBox {
+  height: 30px;
+  margin-top: 50px;
+}
+
+.removeFilterBtn {
+  margin: 0 10px;
+  float: left;
+}
