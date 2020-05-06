@@ -6,6 +6,10 @@ import CustomerAccountsTable from "./Components/CustomerAccountsTable/CustomerAc
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      response: ''
+    }
   }
 
   handleSubmit = (e) => {
@@ -13,7 +17,40 @@ class App extends React.Component {
     let lessThan = e.target[0].checked;
     let greaterThan = e.target[1].checked;
     let filterByAmount = e.target[2].value;
-    console.log(filterByAmount)
+    let reqUrl =  '';
+
+
+    if (lessThan === false && greaterThan === false) {
+      return this.updateResponse('Please select either less than or greater than to filter')
+    }
+
+    if (filterByAmount === '') {
+      return this.updateResponse('Please specify what amount you wish to filter by')
+    }
+
+    if (lessThan === true && greaterThan === false) {
+      reqUrl = `http://localhost:8080/customerAccounts/filter?filterType=less&filterValue=${filterByAmount}`
+    } else if (greaterThan === true && lessThan === false) {
+      reqUrl = `http://localhost:8080/customerAccounts/filter?filterType=greater&filterValue=${filterByAmount}`
+    }
+
+    console.log(reqUrl)
+
+    //await request to complete
+
+    //update table
+
+  };
+
+  updateResponse = (newResponse) => {
+    setTimeout(()=> {
+      this.clearResponse()
+    }, 3000);
+    this.setState({response: newResponse})
+  };
+
+  clearResponse = () => {
+    this.setState({response: ''})
   };
 
   render() {
@@ -33,10 +70,11 @@ class App extends React.Component {
             </div>
             <div className="filterInput">
               <label htmlFor="filterInput">Enter amount:</label>
-              <input id="filterInput" name="filterInput" type="number" className="filterInputElement" required/>
+              <input id="filterInput" name="filterInput" type="number" className="filterInputElement"/>
               <button type="submit" className="btn btn-success">Submit</button>
             </div>
           </form>
+          <div className="messageBox text-danger">{this.state.response}</div>
           <CustomerAccountsTable/>
         </div>
     );

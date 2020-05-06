@@ -7,10 +7,10 @@
   width: 150px;
 }
 
-.filterInput {
-  margin-bottom: 20px;
-}
-
 .filterInputElement {
   margin: 0 10px;
+}
+
+.messageBox {
+  height: 30px;
 }
