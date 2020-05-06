@@ -20,6 +20,12 @@ class CustomerAccountsTable extends React.Component {
         this.fetchCustomerAccounts();
     };
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.filteredCustomerAccPackage !== this.props.filteredCustomerAccPackage) {
+            this.setState({customerAccPackage: this.props.filteredCustomerAccPackage})
+        }
+    }
+
     updateModalVisible = () => {
         this.setState({modalVisible: false});
     };
