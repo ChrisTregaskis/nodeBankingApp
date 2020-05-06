@@ -85,7 +85,7 @@ class App extends React.Component {
             <div className="filterInput">
               <label htmlFor="filterInput">Enter amount:</label>
               <input id="filterInput" name="filterInput" type="number" className="filterInputElement"/>
-              <button type="submit" className="btn btn-success">Submit</button>
+              <button type="submit" className="btn btn-success">Filter Accounts</button>
             </div>
           </form>
           <div className="messageBox text-danger">{this.state.response}</div>
