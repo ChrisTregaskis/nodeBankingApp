@@ -3,14 +3,41 @@ import './App.css';
 import AddAccountForm from "./Components/AddAccountForm/AddAccountForm";
 import CustomerAccountsTable from "./Components/CustomerAccountsTable/CustomerAccountsTable";
 
-function App() {
-  return (
-    <div className="App container">
-      <h1>Customer Accounts Admin Panel.</h1>
-        <AddAccountForm/>
-        <CustomerAccountsTable/>
-    </div>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('clicked!')
+  };
+
+  render() {
+    return (
+        <div className="App container">
+          <h1>Customer Accounts Admin Panel.</h1>
+          <AddAccountForm/>
+          <h3>Filter accounts by balance.</h3>
+          <form onSubmit={this.handleSubmit}>
+            <div className="filterRadioBox">
+              <input type="radio" id="lessThanRadio" name="filterByBalance" value="lessThanRadio"/>
+              <label htmlFor="lessThanRadio" className="radioLabel">Less Than</label>
+            </div>
+            <div className="filterRadioBox">
+              <input type="radio" id="greaterThanRadio" name="filterByBalance" value="greaterThanRadio"/>
+              <label htmlFor="greaterThanRadio" className="radioLabel">Greater Than</label>
+            </div>
+            <div className="filterInput">
+              <label htmlFor="filterInput">Enter amount:</label>
+              <input id="filterInput" name="filterInput" type="number" className="filterInputElement" required/>
+              <button type="submit" className="btn btn-success">Submit</button>
+            </div>
+          </form>
+          <CustomerAccountsTable/>
+        </div>
+    );
+  }
 }
 
 export default App;
