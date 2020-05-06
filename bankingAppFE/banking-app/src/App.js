@@ -8,11 +8,14 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      response: ''
+      response: '',
+      customerAccPackage: {
+        "customerAccounts": []
+      }
     }
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     let lessThan = e.target[0].checked;
     let greaterThan = e.target[1].checked;
@@ -34,12 +37,24 @@ class App extends React.Component {
       reqUrl = `http://localhost:8080/customerAccounts/filter?filterType=greater&filterValue=${filterByAmount}`
     }
 
-    console.log(reqUrl)
+    await this.fetchFilteredAccounts(reqUrl);
+    console.log(this.state.customerAccPackage)
 
-    //await request to complete
+  };
 
-    //update table
-
+  fetchFilteredAccounts = async (url) => {
+    await fetch(url, {
+      method: 'GET',
+      headers: {
+        "Content-Type" : "application/json"
+      }
+    })
+    .then(data => data.json())
+    .then((data) => {
+      this.setState({
+        customerAccPackage: data
+      })
+    })
   };
 
   updateResponse = (newResponse) => {
