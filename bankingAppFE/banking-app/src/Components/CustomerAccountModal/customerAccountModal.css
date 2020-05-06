@@ -1,0 +1,69 @@
+.camContainer {
+    height: 425px;
+    width: 500px;
+    background-color: #34495e;
+    border-radius: 5px;
+    text-align: center;
+    color: #fff;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 10px 13px -7px #000000, 5px 35px 50px 25px rgba(0,0,0,0.58);
+}
+
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+.modalInputNum {
+    display: block;
+    margin: 10px auto;
+}
+
+.name {
+    padding-top: 10px;
+}
+
+.radioLabel {
+    padding: 5px;
+}
+
+.radioBox {
+    width: 100px;
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.modalSubmitBtn {
+    display: block;
+    margin: 20px auto;
+}
+
+.modalResponse {
+    height: 80px;
+}
+
+.deleteAccount {
+    position: relative;
+    bottom: 23px;
+    left: -100px;
+}
+
+.cancelUpdate {
+    position: relative;
+    bottom: 23px;
+    right: -100px;
+}
+
+.amountInput {
+    display: block;
+}
+
+#amount-input {
+    text-align: center;
+}

@@ -31,8 +31,33 @@ app.get('/customerAccounts', (req, res) => {
 });
 
 var getCustomerAccounts = async (db) => {
+    let sortBySname = { customer_sname: 1};
     let collection = db.collection(dbCollection);
-    let result = await collection.find({}).toArray();
+    let result = await collection.find({}).sort(sortBySname).toArray();
+    return result;
+};
+
+//------------------- Get a single customer account route -------------------//
+
+app.get('/singleCustomerAccount', jsonParser, (req, res) => {
+    let id = ObjectId(req.query.id);
+
+    MongoClient.connect(url,
+        { useUnifiedTopology: true },
+        async (err, client) => {
+            console.log('connected correctly to mongodb');
+            let db = client.db(dbName);
+
+            let singleAccount = await getSingleAccount(db, id);
+
+            res.json({"singleAccount": singleAccount});
+        })
+
+});
+
+var getSingleAccount = async (db, id) => {
+    let collection = db.collection(dbCollection);
+    let result = await collection.find({_id: ObjectId(id)}).toArray();
     return result;
 };
 
@@ -305,16 +330,18 @@ app.get('/customerAccounts/filter', (req, res) => {
 });
 
 var getCusAccountsLessThan = async (db, filterValue) => {
+    let sortByBalance = { balance: -1};
     let value = Number(filterValue);
     let collection = db.collection(dbCollection);
-    let result = await collection.find({ balance: { $lt: value } }).toArray();
+    let result = await collection.find({ balance: { $lt: value } }).sort(sortByBalance).toArray();
     return result;
 };
 
 var getCusAccountsGreaterThan = async (db, filterValue) => {
+    let sortByBalance = { balance: -1};
     let value = Number(filterValue);
     let collection = db.collection(dbCollection);
-    let result = await collection.find({ balance: { $gt: value } }).toArray();
+    let result = await collection.find({ balance: { $gt: value } }).sort(sortByBalance).toArray();
     return result;
 };
 

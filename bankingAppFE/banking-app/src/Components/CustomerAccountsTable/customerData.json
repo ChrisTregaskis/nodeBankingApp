@@ -1,0 +1,28 @@
+{
+  "customerAccounts": [
+    {
+      "_id": "5e8eee3534a11e4cf60e823f",
+      "account_number": 988831431,
+      "branch": "Chrispy SW",
+      "customer_fname": "Robert",
+      "customer_sname": "Harley",
+      "balance": 440
+    },
+    {
+      "_id": "5e8eee8634a11e4cf60e8240",
+      "account_number": 225123421,
+      "branch": "Chrispy SW",
+      "customer_fname": "Gemma",
+      "customer_sname": "Tiel",
+      "balance": 24300
+    },
+    {
+      "_id": "5e8f12ea11d31853ec8644c3",
+      "account_number": 509413133,
+      "branch": "Chrispy SW",
+      "customer_fname": "Steven",
+      "customer_sname": "Hawkin",
+      "balance": 1546092
+    }
+  ]
+}
