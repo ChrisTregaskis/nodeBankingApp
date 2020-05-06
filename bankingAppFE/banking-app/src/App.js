@@ -10,7 +10,10 @@ class App extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log('clicked!')
+    let lessThan = e.target[0].checked;
+    let greaterThan = e.target[1].checked;
+    let filterByAmount = e.target[2].value;
+    console.log(filterByAmount)
   };
 
   render() {
