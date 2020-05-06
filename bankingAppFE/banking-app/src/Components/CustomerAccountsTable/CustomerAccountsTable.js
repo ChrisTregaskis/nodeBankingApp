@@ -23,6 +23,8 @@ class CustomerAccountsTable extends React.Component {
     componentDidUpdate(prevProps) {
         if (prevProps.filteredCustomerAccPackage !== this.props.filteredCustomerAccPackage) {
             this.setState({customerAccPackage: this.props.filteredCustomerAccPackage})
+        } else if (prevProps.removeFilter !== this.props.removeFilter) {
+            this.fetchCustomerAccounts()
         }
     }
 
