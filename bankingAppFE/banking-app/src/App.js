@@ -11,7 +11,8 @@ class App extends React.Component {
       response: '',
       filteredCustomerAccPackage: {
         "customerAccounts": []
-      }
+      },
+      removeFilter: false
     }
   }
 
@@ -36,7 +37,7 @@ class App extends React.Component {
     } else if (greaterThan === true && lessThan === false) {
       reqUrl = `http://localhost:8080/customerAccounts/filter?filterType=greater&filterValue=${filterByAmount}`
     }
-
+    await this.setState({removeFilter: false});
     await this.fetchFilteredAccounts(reqUrl);
 
   };
@@ -67,6 +68,16 @@ class App extends React.Component {
     this.setState({response: ''})
   };
 
+  removeFilter = () => {
+    document.getElementById('filterInput').value = '';
+    document.getElementById('lessThanRadio').checked = false;
+    document.getElementById('greaterThanRadio').checked = false;
+    this.setState({
+      response: '',
+      removeFilter: true
+    })
+  };
+
   render() {
     return (
         <div className="App container">
@@ -88,8 +99,12 @@ class App extends React.Component {
               <button type="submit" className="btn btn-success">Filter Accounts</button>
             </div>
           </form>
+          <button className="btn btn-dark removeFilterBtn" onClick={this.removeFilter}>Remove Filter</button>
           <div className="messageBox text-danger">{this.state.response}</div>
-          <CustomerAccountsTable filteredCustomerAccPackage={this.state.filteredCustomerAccPackage}/>
+          <CustomerAccountsTable
+              filteredCustomerAccPackage={this.state.filteredCustomerAccPackage}
+              removeFilter={this.state.removeFilter}
+          />
         </div>
     );
   }
