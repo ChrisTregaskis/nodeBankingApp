@@ -31,8 +31,9 @@ app.get('/customerAccounts', (req, res) => {
 });
 
 var getCustomerAccounts = async (db) => {
+    let sortBySname = { customer_sname: 1};
     let collection = db.collection(dbCollection);
-    let result = await collection.find({}).toArray();
+    let result = await collection.find({}).sort(sortBySname).toArray();
     return result;
 };
 
