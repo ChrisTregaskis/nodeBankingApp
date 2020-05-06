@@ -330,16 +330,18 @@ app.get('/customerAccounts/filter', (req, res) => {
 });
 
 var getCusAccountsLessThan = async (db, filterValue) => {
+    let sortByBalance = { balance: -1};
     let value = Number(filterValue);
     let collection = db.collection(dbCollection);
-    let result = await collection.find({ balance: { $lt: value } }).toArray();
+    let result = await collection.find({ balance: { $lt: value } }).sort(sortByBalance).toArray();
     return result;
 };
 
 var getCusAccountsGreaterThan = async (db, filterValue) => {
+    let sortByBalance = { balance: -1};
     let value = Number(filterValue);
     let collection = db.collection(dbCollection);
-    let result = await collection.find({ balance: { $gt: value } }).toArray();
+    let result = await collection.find({ balance: { $gt: value } }).sort(sortByBalance).toArray();
     return result;
 };
 
