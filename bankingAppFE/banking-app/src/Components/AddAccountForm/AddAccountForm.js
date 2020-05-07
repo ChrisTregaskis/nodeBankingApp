@@ -38,7 +38,8 @@ class AddAccountForm extends React.Component {
             firstName: '',
             surname: '',
             balance: ''
-        })
+        });
+        this.props.removeFilter();
 
     };
 
@@ -54,8 +55,19 @@ class AddAccountForm extends React.Component {
         });
 
         let responseData = await response.json();
-        this.setState({response: responseData.message});
-        this.props.removeFilter();
+        this.updateResponse(responseData.message)
+
+    };
+
+    updateResponse = (newResponse) => {
+        setTimeout(()=> {
+            this.clearResponse()
+        }, 3000);
+        this.setState({response : newResponse})
+    };
+
+    clearResponse = () => {
+        this.setState({response : ''})
     };
 
 
