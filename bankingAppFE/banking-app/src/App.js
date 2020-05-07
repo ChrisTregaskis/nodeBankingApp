@@ -82,7 +82,7 @@ class App extends React.Component {
     return (
         <div className="App container">
           <h1>Customer Accounts Admin Panel.</h1>
-          <AddAccountForm/>
+          <AddAccountForm removeFilter={this.removeFilter}/>
           <h3>Filter accounts by balance.</h3>
           <form onSubmit={this.handleSubmit}>
             <div className="filterRadioBox">
