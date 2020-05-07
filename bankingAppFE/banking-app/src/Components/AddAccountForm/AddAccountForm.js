@@ -34,7 +34,12 @@ class AddAccountForm extends React.Component {
         };
 
         await this.sendRequest('http://localhost:8080/customerAccounts', 'POST', data)
-        window.location.reload();
+        this.setState({
+            firstName: '',
+            surname: '',
+            balance: ''
+        })
+
     };
 
     sendRequest = async (url, requestMethod, data) => {
@@ -50,7 +55,7 @@ class AddAccountForm extends React.Component {
 
         let responseData = await response.json();
         this.setState({response: responseData.message});
-
+        this.props.removeFilter();
     };
 
 
