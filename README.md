@@ -103,3 +103,25 @@ GET
     	"success": false,
     	"message": "Unsuccessful. Api expecting filterType to either be 'less' or 'greater' "
 	}`
+
+
+**/customerAccounts/id**
+ 
+GET
+- Retrieves a single customer account
+- Requires keys and values:
+    - `id` = obj_id
+- To send example: `/id?id=5e8eee8634a11e4cf60e8240`
+- Returns:
+    - if successful
+        - `status 200`
+        - `{ "customerAccounts": [
+		{
+		    "_id": "5e8eee8634a11e4cf60e8240",
+		    "account_number": 225123421,
+		    "branch": "Chrispy SW",
+		    "customer_fname": "Gemma",
+		    "customer_sname": "Tiel",
+		    "balance": 24300
+		}
+	]}`  
